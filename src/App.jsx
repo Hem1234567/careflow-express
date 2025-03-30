@@ -11,10 +11,7 @@ import DoctorsPage from "./pages/DoctorsPage.jsx";
 import PharmacyPage from "./pages/PharmacyPage.jsx";
 import LabTestsPage from "./pages/LabTestsPage.jsx";
 import HealthRecordsPage from "./pages/HealthRecordsPage.jsx";
-import AuthPage from "./pages/AuthPage.jsx";
 import NotFound from "./pages/NotFound.jsx";
-import { AuthProvider } from "./contexts/AuthContext";
-import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -24,26 +21,18 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AuthProvider>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/doctors" element={<DoctorsPage />} />
-              <Route path="/pharmacy" element={<PharmacyPage />} />
-              <Route path="/lab-tests" element={<LabTestsPage />} />
-              <Route path="/health-records" element={
-                <ProtectedRoute>
-                  <HealthRecordsPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/auth/reset-password" element={<AuthPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Footer />
-          </div>
-        </AuthProvider>
+        <div className="flex flex-col min-h-screen">
+          <Header />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/doctors" element={<DoctorsPage />} />
+            <Route path="/pharmacy" element={<PharmacyPage />} />
+            <Route path="/lab-tests" element={<LabTestsPage />} />
+            <Route path="/health-records" element={<HealthRecordsPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <Footer />
+        </div>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
