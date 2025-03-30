@@ -1,6 +1,6 @@
 
 import { Link } from 'react-router-dom';
-import { Stethoscope, Pill, Flask, Calendar, Clock, Award, UserCheck, ShieldCheck } from 'lucide-react';
+import { Stethoscope, Pill, BeakerIcon, Calendar, Clock, Award, UserCheck, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ServiceCard from '@/components/ui/ServiceCard';
 import DoctorCard from '@/components/ui/DoctorCard';
@@ -66,7 +66,7 @@ const HomePage = () => {
             <ServiceCard 
               title="Book Lab Tests"
               description="Book lab tests online and get samples collected from your home. Receive reports online."
-              icon={<Flask size={36} />}
+              icon={<BeakerIcon size={36} />}
               link="/lab-tests"
             />
           </div>
