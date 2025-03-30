@@ -4,27 +4,27 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Header from "./components/layout/Header.jsx";
+import Footer from "./components/layout/Footer.jsx";
+import HomePage from "./pages/HomePage.jsx";
+import DoctorsPage from "./pages/DoctorsPage.jsx";
+import PharmacyPage from "./pages/PharmacyPage.jsx";
+import LabTestsPage from "./pages/LabTestsPage.jsx";
+import HealthRecordsPage from "./pages/HealthRecordsPage.jsx";
+import AuthPage from "./pages/AuthPage.jsx";
+import NotFound from "./pages/NotFound.jsx";
 import { AuthProvider } from "./contexts/AuthContext";
-import Header from "./components/layout/Header";
-import Footer from "./components/layout/Footer";
-import HomePage from "./pages/HomePage";
-import DoctorsPage from "./pages/DoctorsPage";
-import PharmacyPage from "./pages/PharmacyPage";
-import LabTestsPage from "./pages/LabTestsPage";
-import HealthRecordsPage from "./pages/HealthRecordsPage";
-import AuthPage from "./pages/AuthPage";
-import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <AuthProvider>
           <div className="flex flex-col min-h-screen">
             <Header />
             <Routes>
@@ -37,14 +37,15 @@ const App = () => (
                   <HealthRecordsPage />
                 </ProtectedRoute>
               } />
-              <Route path="/auth/*" element={<AuthPage />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/auth/reset-password" element={<AuthPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Footer />
           </div>
-        </TooltipProvider>
-      </AuthProvider>
-    </BrowserRouter>
+        </AuthProvider>
+      </BrowserRouter>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 

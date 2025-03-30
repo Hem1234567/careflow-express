@@ -1,7 +1,8 @@
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const AuthContext = createContext();
 
@@ -14,99 +15,122 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+      (event, currentSession) => {
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
         setLoading(false);
+        
+        if (event === 'SIGNED_IN') {
+          toast.success("Signed in successfully!");
+          navigate('/');
+        }
+        if (event === 'SIGNED_OUT') {
+          toast.info("Signed out successfully");
+          navigate('/auth');
+        }
       }
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, []);
-
-  const signIn = async (email, password) => {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      navigate('/');
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  };
+  }, [navigate]);
 
   const signUp = async (email, password, fullName) => {
     try {
-      const { error } = await supabase.auth.signUp({ 
-        email, 
+      const { error } = await supabase.auth.signUp({
+        email,
         password,
         options: {
           data: {
-            full_name: fullName
-          }
-        }
+            full_name: fullName,
+          },
+        },
       });
+
       if (error) throw error;
-      return { success: true };
+      toast.success("Registration successful! Please check your email for verification.");
     } catch (error) {
-      return { success: false, error: error.message };
+      toast.error(error.message || "Error during sign up");
+      throw error;
+    }
+  };
+
+  const signIn = async (email, password) => {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      toast.error(error.message || "Error signing in");
+      throw error;
     }
   };
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
-      navigate('/auth');
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
     } catch (error) {
-      console.error('Error signing out:', error.message);
+      toast.error(error.message || "Error signing out");
     }
   };
 
   const resetPassword = async (email) => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/auth/reset-password',
+        redirectTo: `${window.location.origin}/auth/reset-password`,
       });
+      
       if (error) throw error;
-      return { success: true };
+      toast.success("Password reset instructions sent to your email");
     } catch (error) {
-      return { success: false, error: error.message };
+      toast.error(error.message || "Error sending reset instructions");
+      throw error;
     }
   };
 
-  const updatePassword = async (newPassword) => {
+  const updatePassword = async (password) => {
     try {
       const { error } = await supabase.auth.updateUser({
-        password: newPassword
+        password,
       });
+      
       if (error) throw error;
-      return { success: true };
+      toast.success("Password updated successfully");
+      navigate("/");
     } catch (error) {
-      return { success: false, error: error.message };
+      toast.error(error.message || "Error updating password");
+      throw error;
     }
   };
 
   const value = {
     user,
     session,
-    loading,
-    signIn,
     signUp,
+    signIn,
     signOut,
     resetPassword,
-    updatePassword
+    updatePassword,
+    loading,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 }

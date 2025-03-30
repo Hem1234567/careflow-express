@@ -1,9 +1,8 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Search, ShoppingCart } from 'lucide-react';
+import { Menu, X, Search, ShoppingCart, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import AuthButtons from '@/components/AuthButtons';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -37,7 +36,10 @@ const Header = () => {
             <Button variant="ghost" size="icon">
               <ShoppingCart className="h-5 w-5" />
             </Button>
-            <AuthButtons />
+            <Button className="bg-healthcare-teal hover:bg-opacity-90">
+              <User className="h-4 w-4 mr-2" />
+              Login
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -71,7 +73,10 @@ const Header = () => {
                 <Button variant="ghost" size="icon">
                   <ShoppingCart className="h-5 w-5" />
                 </Button>
-                <AuthButtons />
+                <Button className="bg-healthcare-teal hover:bg-opacity-90">
+                  <User className="h-4 w-4 mr-2" />
+                  Login
+                </Button>
               </div>
             </nav>
           </div>
